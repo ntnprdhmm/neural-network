@@ -10,6 +10,20 @@ public class Matrix {
         this.matrix = new double[rows][cols];
     }
 
+    /**
+     * Create a new Matrix from a 1D array
+     * @param arr a 1D array to transform into a Matrix
+     */
+    public Matrix(double[] arr) {
+        this.rows = arr.length;
+        this.cols = 1;
+        this.matrix = new double[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            this.matrix[i][0] = arr[i];
+        }
+    }
+
     public int getRows() {
         return rows;
     }
@@ -135,6 +149,24 @@ public class Matrix {
 
         result.setMatrix(resultMatrix);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        String str = "";
+
+        str += "----------------------------------------\n";
+        str += "Matrix: rows=" + this.rows + " - cols=" + this.cols + "\n";
+        str += "----------------------------------------\n";
+
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                str += this.matrix[i][j] + " ";
+            }
+            str += "\n";
+        }
+
+        return str;
     }
 
 }

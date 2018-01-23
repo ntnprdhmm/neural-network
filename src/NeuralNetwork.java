@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public class NeuralNetwork {
 
     private int inputNodes;
@@ -14,14 +12,50 @@ public class NeuralNetwork {
         this.hiddenNodes = hiddenNodes;
         this.outputNodes = outputNodes;
 
-        this.inputLayer = new Layer(inputNodes, hiddenNodes);
-        this.hiddenLayer = new Layer(hiddenNodes, outputNodes);
-        this.outputLayer = new Layer(outputNodes, 1);
+        this.hiddenLayer = new Layer(hiddenNodes, inputNodes);
+        this.outputLayer = new Layer(outputNodes, hiddenNodes);
     }
 
-    public double[] feedForward(double[] inputs) {
-        // TODO: feed forward
-        return new double[]{};
+    /**
+     * Pass the inputs to the NN and return the NN's outputs
+     * @param inputsArr the inputs values
+     * @return the NN's outputs
+     */
+    public double[] feedForward(double[] inputsArr) {
+        Matrix inputs = new Matrix(inputsArr);
+
+        // input layer -> hidden layer
+        Matrix hidden = this.hiddenLayer.getWeights().multiply(inputs);
+        hidden = NeuralNetwork.activationFunction(hidden);
+
+        // hidden layer -> output layer
+        Matrix output = this.outputLayer.getWeights().multiply(hidden);
+        output = NeuralNetwork.activationFunction(output);
+        double[][] outputMatrix = output.getMatrix();
+
+        // transform the output Matrix to a 1D array of double
+        double[] outputArr = new double[output.getMatrix().length];
+        for (int i = 0; i < outputArr.length; i++) {
+            outputArr[i] = outputMatrix[i][0];
+        }
+
+        return outputArr;
+    }
+
+    public static Matrix activationFunction(Matrix m) {
+        double[][] matrix = m.getMatrix();
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++ ) {
+                matrix[i][j] = NeuralNetwork.sigmoid(matrix[i][j]);
+            }
+        }
+
+        return m;
+    }
+
+    public static double sigmoid(double x) {
+        return 1 / (1 + Math.exp(-x));
     }
 
     public String toString() {
@@ -30,14 +64,13 @@ public class NeuralNetwork {
         str += "NEURAL NETWORK\n";
         str += "==============================\n";
 
-        str += "InputLayer\n";
-        str += inputLayer.toString() + "\n";
+        str += "Inputs: " + this.inputNodes + "\n\n";
 
         str += "HiddenLayer\n";
-        str += hiddenLayer.toString() + "\n";
+        str += this.hiddenLayer.toString() + "\n";
 
         str += "OutputLayer\n";
-        str += outputLayer.toString() + "\n";
+        str += this.outputLayer.toString() + "\n";
 
         return str;
     }

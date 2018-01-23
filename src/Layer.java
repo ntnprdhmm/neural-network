@@ -14,12 +14,16 @@ public class Layer {
         this.weights.randomize();
     }
 
+    public Matrix getWeights() {
+        return this.weights;
+    }
+
     @Override
     public String toString() {
         String str = "";
         for (int i = 0; i < previousLayerNodes; i++) {
             str += "Neuron " + i + "\n";
-            str += "- weights: " + Arrays.toString(this.weights.getMatrix()[i]) + "\n";
+            str += "- inputs weights: " + Arrays.toString(this.weights.getMatrix()[i]) + "\n";
         }
         return str;
     }
