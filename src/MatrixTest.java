@@ -135,4 +135,25 @@ class MatrixTest {
         }
     }
 
+    @Test
+    void transpose() {
+        int rows = 4;
+        int cols = 3;
+
+        Matrix a = new Matrix(rows, cols);
+        double[][] aMatrix = new double[][]{{1, 0, -1}, {2, 7, -5}, {4, -3, 2}, {-1, 3, 0}};
+        a.setMatrix(aMatrix);
+
+        Matrix result = a.transpose();
+        double[][] resultMatrix = result.getMatrix();
+
+        double[][] expected = new double[][]{{1, 2, 4, -1}, {0, 7, -3, 3}, {-1, -5, 2, 0}};
+
+        for (int i = 0; i < cols; i++) {
+            for (int j = 0; j < rows; j++) {
+                assertEquals(expected[i][j], resultMatrix[i][j]);
+            }
+        }
+    }
+
 }

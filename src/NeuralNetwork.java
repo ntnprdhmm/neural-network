@@ -74,7 +74,6 @@ public class NeuralNetwork {
             Matrix Y = this.feedForward(inputMatrix);
             // calculate the error
             Matrix error = Y.subtract(expectedOutput);
-            System.out.println(error);
         }
     }
 

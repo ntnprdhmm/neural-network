@@ -151,22 +151,55 @@ public class Matrix {
         return result;
     }
 
+    /**
+     * Subtract the matrix by a number
+     * @param n the number to subtract
+     * @return a new Matrix
+     */
     public Matrix subtract(double n) {
         return this.add(n * -1);
     }
 
+    /**
+     * Subtract the matrix by another matrix
+     * @param m the Matrix to subtract
+     * @return a new Matrix
+     */
     public Matrix subtract(Matrix m) {
         return this.add(m.multiply(-1));
     }
 
+    /**
+     * Transpose the current Matrix
+     * @return a new Matrix
+     */
+    public Matrix transpose() {
+        Matrix transposed = new Matrix(this.cols, this.rows);
+        double[][] transposedMatrix = transposed.getMatrix();
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                transposedMatrix[j][i] = this.matrix[i][j];
+            }
+        }
+
+        transposed.setMatrix(transposedMatrix);
+        return transposed;
+    }
+
+    /**
+     * Check if the given Matrix is a vector
+     * @param m the Matrix to check
+     * @return true if it's a vector, or false
+     */
     private static boolean isVector(Matrix m) {
         return m.cols == 1;
     }
 
     /**
      * If the Matrix is a vector (only one col), convert it to a simple array
-     * @param m
-     * @return
+     * @param m the Matrix to convert
+     * @return a simple array of double
      */
     public static double[] vectorToArray(Matrix m) {
         // check if it's a vector
