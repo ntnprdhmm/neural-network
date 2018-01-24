@@ -151,6 +151,40 @@ public class Matrix {
         return result;
     }
 
+    public Matrix subtract(double n) {
+        return this.add(n * -1);
+    }
+
+    public Matrix subtract(Matrix m) {
+        return this.add(m.multiply(-1));
+    }
+
+    private static boolean isVector(Matrix m) {
+        return m.cols == 1;
+    }
+
+    /**
+     * If the Matrix is a vector (only one col), convert it to a simple array
+     * @param m
+     * @return
+     */
+    public static double[] vectorToArray(Matrix m) {
+        // check if it's a vector
+        if (!Matrix.isVector(m)) {
+            throw new RuntimeException("the given Matrix is not a vector");
+        }
+
+        double[][] matrix = m.getMatrix();
+
+        // transform the output Matrix to a 1D array of double
+        double[] arr = new double[m.rows];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = matrix[i][0];
+        }
+
+        return arr;
+    }
+
     @Override
     public String toString() {
         String str = "";

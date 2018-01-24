@@ -91,4 +91,48 @@ class MatrixTest {
         }
     }
 
+    @Test
+    void subtractN() {
+        double n = 1;
+        int rows = 2;
+        int cols = 2;
+
+        Matrix m = new Matrix(rows, cols);
+        double[][] originalMatrix = new double[][]{{1.0, 2.0}, {4.0, 5.0}};
+
+        m.setMatrix(originalMatrix);
+        Matrix result = m.subtract(n);
+
+        double[][] resultMatrix = result.getMatrix();
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                assertEquals(resultMatrix[i][j], originalMatrix[i][j]-n);
+            }
+        }
+    }
+
+    @Test
+    void subtractMatrix() {
+        int rows = 2;
+        int cols = 2;
+
+        Matrix a = new Matrix(rows, cols);
+        double[][] aMatrix = new double[][]{{0.0, 1.0}, {3.0, 2.0}};
+        a.setMatrix(aMatrix);
+
+        Matrix b = new Matrix(cols, rows);
+        double[][] bMatrix = new double[][]{{-1.0, 3.0}, {0.0, 5.0}};
+        b.setMatrix(bMatrix);
+
+        Matrix result = a.subtract(b);
+        double[][] resultMatrix = result.getMatrix();
+        double[][] expected = new double[][]{{1, -2}, {3, -3}};
+
+        for (int i = 0; i < resultMatrix.length; i++) {
+            for (int j = 0; j < resultMatrix[0].length; j++) {
+                assertEquals(resultMatrix[i][j], expected[i][j]);
+            }
+        }
+    }
+
 }

@@ -21,8 +21,17 @@ public class NeuralNetwork {
      * @param inputsArr the inputs values
      * @return the NN's outputs
      */
-    public double[] feedForward(double[] inputsArr) {
+    public Matrix feedForward(double[] inputsArr) {
         Matrix inputs = new Matrix(inputsArr);
+        return this.feedForward(inputs);
+    }
+
+    /**
+     * Pass the inputs to the NN and return the NN's outputs
+     * @param inputs the inputs values
+     * @return the NN's outputs
+     */
+    public Matrix feedForward(Matrix inputs) {
 
         // input layer -> hidden layer
         Matrix hidden = this.hiddenLayer.getWeights().multiply(inputs);
@@ -33,15 +42,40 @@ public class NeuralNetwork {
         Matrix output = this.outputLayer.getWeights().multiply(hidden);
         output.add(outputLayer.getBias());
         output = NeuralNetwork.activationFunction(output);
-        double[][] outputMatrix = output.getMatrix();
 
-        // transform the output Matrix to a 1D array of double
-        double[] outputArr = new double[output.getMatrix().length];
-        for (int i = 0; i < outputArr.length; i++) {
-            outputArr[i] = outputMatrix[i][0];
+        return output;
+    }
+
+    /**
+     * Train the NN
+     * @param inputs training inputs
+     * @param expectedOutputs expected outputs for the given inputs
+     */
+    public void train(double[][] inputs, double[][] expectedOutputs) {
+        // there must be k array of length this.inputsNodes in inputs
+        if (inputs.length > 0 && inputs[0].length != this.inputNodes) {
+            throw new RuntimeException("the number of values in each input must be equal to the number of neurons " +
+                    "of the input layer");
+        }
+        // there must be k array of length this.outputNodes in expectedOutputs
+        if (expectedOutputs.length < inputs.length) {
+            throw new RuntimeException("each input must have an expected output");
+        }
+        if (expectedOutputs.length > 0 && expectedOutputs[0].length != this.outputNodes) {
+            throw new RuntimeException("the number of values in each expected output must be equal to the number of " +
+                    "neurons of the output layer");
         }
 
-        return outputArr;
+        for (int i = 0; i < inputs.length; i++) {
+            // convert input and expected output to Matrix
+            Matrix inputMatrix = new Matrix(inputs[i]);
+            Matrix expectedOutput = new Matrix(expectedOutputs[i]);
+            // prediction
+            Matrix Y = this.feedForward(inputMatrix);
+            // calculate the error
+            Matrix error = Y.subtract(expectedOutput);
+            System.out.println(error);
+        }
     }
 
     public static Matrix activationFunction(Matrix m) {
