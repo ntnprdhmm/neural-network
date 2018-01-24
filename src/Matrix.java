@@ -137,22 +137,6 @@ public class Matrix {
         return result;
     }
 
-    public Matrix multiplyElements(Matrix m) {
-        Matrix result = new Matrix(this.rows, this.cols);
-        double[][] resultMatrix = result.getMatrix();
-
-        double[][] mMatrix = m.getMatrix();
-
-        for (int i = 0; i < this.rows; i++) {
-            for (int j = 0; j < this.cols; j++) {
-                resultMatrix[i][j] = this.matrix[i][j] * mMatrix[i][j];
-            }
-        }
-
-        result.setMatrix(resultMatrix);
-        return result;
-    }
-
     /**
      * Multiply the matrix by a double
      * @param n the number to multiply
@@ -166,6 +150,27 @@ public class Matrix {
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
                 resultMatrix[i][j] = this.matrix[i][j] * n;
+            }
+        }
+
+        result.setMatrix(resultMatrix);
+        return result;
+    }
+
+    /**
+     * Multiply the matching elements of 2 matrices together
+     * @param m the second Matrix
+     * @return a new Matrix
+     */
+    public Matrix hadamardProduct(Matrix m) {
+        Matrix result = new Matrix(this.rows, this.cols);
+        double[][] resultMatrix = result.getMatrix();
+
+        double[][] mMatrix = m.getMatrix();
+
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                resultMatrix[i][j] = this.matrix[i][j] * mMatrix[i][j];
             }
         }
 

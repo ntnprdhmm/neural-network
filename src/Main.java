@@ -14,7 +14,7 @@ public class Main {
         //System.out.println(n);
 
         // test
-        double[] outputs = Matrix.vectorToArray(n.feedForward(inputs));
+        double[] outputs = Matrix.vectorToArray(n.feedForward(inputs)[2]);
 
         System.out.println(Arrays.toString(outputs));
     }

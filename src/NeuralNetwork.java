@@ -19,9 +19,9 @@ public class NeuralNetwork {
     /**
      * Pass the inputs to the NN and return the NN's outputs
      * @param inputsArr the inputs values
-     * @return the NN's outputs
+     * @return the NN's outputs for each layer
      */
-    public Matrix feedForward(double[][] inputsArr) {
+    public Matrix[] feedForward(double[][] inputsArr) {
         Matrix inputs = new Matrix(inputsArr);
         return this.feedForward(inputs);
     }
@@ -29,9 +29,9 @@ public class NeuralNetwork {
     /**
      * Pass the inputs to the NN and return the NN's outputs
      * @param l0 the inputs values
-     * @return the NN's outputs
+     * @return the NN's outputs for each layer
      */
-    public Matrix feedForward(Matrix l0) {
+    public Matrix[] feedForward(Matrix l0) {
 
         // input layer -> hidden layer
         Matrix hidden = l0.multiply(this.hiddenLayer.getWeights());
@@ -40,7 +40,7 @@ public class NeuralNetwork {
         Matrix output = l1.multiply(this.outputLayer.getWeights());
         Matrix l2 = NeuralNetwork.activationFunction(output);
 
-        return l2;
+        return new Matrix[]{l0, l1, l2};
     }
 
     /**
@@ -64,21 +64,19 @@ public class NeuralNetwork {
         }
 
         for (int i = 0; i < 100; i++) {
-            Matrix l0 = new Matrix(inputs);
-            Matrix y = new Matrix(expectedOutputs);
+            // predict
+            Matrix[] layersOutputs = feedForward(inputs);
+            Matrix l0 = layersOutputs[0];
+            Matrix l1 = layersOutputs[1];
+            Matrix l2 = layersOutputs[2];
 
-            // input layer -> hidden layer
-            Matrix hidden = l0.multiply(this.hiddenLayer.getWeights());
-            Matrix l1 = NeuralNetwork.activationFunction(hidden);
-            // hidden layer -> output layer
-            Matrix output = l1.multiply(this.outputLayer.getWeights());
-            Matrix l2 = NeuralNetwork.activationFunction(output);
+            Matrix Y = new Matrix(expectedOutputs);
 
             // calculate the error
-            Matrix l2Error = y.subtract(l2);
-            Matrix l2Delta = l2Error.multiplyElements(NeuralNetwork.errorDelta(l2));
+            Matrix l2Error = Y.subtract(l2);
+            Matrix l2Delta = l2Error.hadamardProduct(NeuralNetwork.errorDelta(l2));
             Matrix l1Error = l2.multiply(outputLayer.getWeights().transpose());
-            Matrix l1Delta = l1Error.multiplyElements(NeuralNetwork.errorDelta(l1));
+            Matrix l1Delta = l1Error.hadamardProduct(NeuralNetwork.errorDelta(l1));
 
             // update the weights
             outputLayer.setWeights(outputLayer.getWeights().add(l1.transpose().multiply(l2Delta)));
