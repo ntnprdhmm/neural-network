@@ -26,10 +26,12 @@ public class NeuralNetwork {
 
         // input layer -> hidden layer
         Matrix hidden = this.hiddenLayer.getWeights().multiply(inputs);
+        hidden.add(hiddenLayer.getBias());
         hidden = NeuralNetwork.activationFunction(hidden);
 
         // hidden layer -> output layer
         Matrix output = this.outputLayer.getWeights().multiply(hidden);
+        output.add(outputLayer.getBias());
         output = NeuralNetwork.activationFunction(output);
         double[][] outputMatrix = output.getMatrix();
 
