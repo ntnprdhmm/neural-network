@@ -21,29 +21,26 @@ public class NeuralNetwork {
      * @param inputsArr the inputs values
      * @return the NN's outputs
      */
-    public Matrix feedForward(double[] inputsArr) {
+    public Matrix feedForward(double[][] inputsArr) {
         Matrix inputs = new Matrix(inputsArr);
         return this.feedForward(inputs);
     }
 
     /**
      * Pass the inputs to the NN and return the NN's outputs
-     * @param inputs the inputs values
+     * @param l0 the inputs values
      * @return the NN's outputs
      */
-    public Matrix feedForward(Matrix inputs) {
+    public Matrix feedForward(Matrix l0) {
 
         // input layer -> hidden layer
-        Matrix hidden = this.hiddenLayer.getWeights().multiply(inputs);
-        hidden.add(hiddenLayer.getBias());
-        hidden = NeuralNetwork.activationFunction(hidden);
-
+        Matrix hidden = l0.multiply(this.hiddenLayer.getWeights());
+        Matrix l1 = NeuralNetwork.activationFunction(hidden);
         // hidden layer -> output layer
-        Matrix output = this.outputLayer.getWeights().multiply(hidden);
-        output.add(outputLayer.getBias());
-        output = NeuralNetwork.activationFunction(output);
+        Matrix output = l1.multiply(this.outputLayer.getWeights());
+        Matrix l2 = NeuralNetwork.activationFunction(output);
 
-        return output;
+        return l2;
     }
 
     /**
@@ -66,15 +63,39 @@ public class NeuralNetwork {
                     "neurons of the output layer");
         }
 
-        for (int i = 0; i < inputs.length; i++) {
-            // convert input and expected output to Matrix
-            Matrix inputMatrix = new Matrix(inputs[i]);
-            Matrix expectedOutput = new Matrix(expectedOutputs[i]);
-            // prediction
-            Matrix Y = this.feedForward(inputMatrix);
+        for (int i = 0; i < 100; i++) {
+            Matrix l0 = new Matrix(inputs);
+            Matrix y = new Matrix(expectedOutputs);
+
+            // input layer -> hidden layer
+            Matrix hidden = l0.multiply(this.hiddenLayer.getWeights());
+            Matrix l1 = NeuralNetwork.activationFunction(hidden);
+            // hidden layer -> output layer
+            Matrix output = l1.multiply(this.outputLayer.getWeights());
+            Matrix l2 = NeuralNetwork.activationFunction(output);
+
             // calculate the error
-            Matrix error = Y.subtract(expectedOutput);
+            Matrix l2Error = y.subtract(l2);
+            Matrix l2Delta = l2Error.multiplyElements(NeuralNetwork.errorDelta(l2));
+            Matrix l1Error = l2.multiply(outputLayer.getWeights().transpose());
+            Matrix l1Delta = l1Error.multiplyElements(NeuralNetwork.errorDelta(l1));
+
+            // update the weights
+            outputLayer.setWeights(outputLayer.getWeights().add(l1.transpose().multiply(l2Delta)));
+            hiddenLayer.setWeights(hiddenLayer.getWeights().add(l0.transpose().multiply(l1Delta)));
         }
+    }
+
+    public static Matrix errorDelta(Matrix m) {
+        double[][] matrix = m.getMatrix();
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++ ) {
+                matrix[i][j] = NeuralNetwork.sigmoidDeriv(matrix[i][j]);
+            }
+        }
+
+        return m;
     }
 
     public static Matrix activationFunction(Matrix m) {
@@ -91,6 +112,10 @@ public class NeuralNetwork {
 
     public static double sigmoid(double x) {
         return 1 / (1 + Math.exp(-x));
+    }
+
+    public static double sigmoidDeriv(double x) {
+        return x * (1-x);
     }
 
     public String toString() {

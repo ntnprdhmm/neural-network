@@ -11,7 +11,7 @@ public class Matrix {
     }
 
     /**
-     * Create a new Matrix from a 1D array
+     * Create a new Matrix (vector) from a 1D array
      * @param arr a 1D array to transform into a Matrix
      */
     public Matrix(double[] arr) {
@@ -22,6 +22,12 @@ public class Matrix {
         for (int i = 0; i < rows; i++) {
             this.matrix[i][0] = arr[i];
         }
+    }
+
+    public Matrix(double[][] arr) {
+        this.rows = arr.length;
+        this.cols = arr[0].length;
+        this.matrix = arr;
     }
 
     public int getRows() {
@@ -124,6 +130,22 @@ public class Matrix {
                 }
 
                 resultMatrix[i][j] = sum;
+            }
+        }
+
+        result.setMatrix(resultMatrix);
+        return result;
+    }
+
+    public Matrix multiplyElements(Matrix m) {
+        Matrix result = new Matrix(this.rows, this.cols);
+        double[][] resultMatrix = result.getMatrix();
+
+        double[][] mMatrix = m.getMatrix();
+
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                resultMatrix[i][j] = this.matrix[i][j] * mMatrix[i][j];
             }
         }
 
