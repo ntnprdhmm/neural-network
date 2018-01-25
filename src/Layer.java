@@ -5,7 +5,6 @@ public class Layer {
     private int previousLayerNodes;
     private int nextLayerNodes;
     private Matrix weights;
-    private Matrix bias;
 
     public Layer(int previousLayerNodes, int nextLayerNodes) {
         this.previousLayerNodes = previousLayerNodes;
@@ -13,8 +12,6 @@ public class Layer {
 
         this.weights = new Matrix(nextLayerNodes, previousLayerNodes);
         this.weights.randomize();
-
-        this.bias = new Matrix(previousLayerNodes, 1);
     }
 
     public Matrix getWeights() {
@@ -23,10 +20,6 @@ public class Layer {
 
     public void setWeights(Matrix weights) {
         this.weights = weights;
-    }
-
-    public Matrix getBias() {
-        return this.bias;
     }
 
     @Override

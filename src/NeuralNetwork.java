@@ -3,7 +3,6 @@ public class NeuralNetwork {
     private int inputNodes;
     private int hiddenNodes;
     private int outputNodes;
-    private Layer inputLayer;
     private Layer hiddenLayer;
     private Layer outputLayer;
 
@@ -63,7 +62,7 @@ public class NeuralNetwork {
                     "neurons of the output layer");
         }
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 60000; i++) {
             // predict
             Matrix[] layersOutputs = feedForward(inputs);
             Matrix l0 = layersOutputs[0];
@@ -75,8 +74,19 @@ public class NeuralNetwork {
             // calculate the error
             Matrix l2Error = Y.subtract(l2);
             Matrix l2Delta = l2Error.hadamardProduct(NeuralNetwork.errorDelta(l2));
-            Matrix l1Error = l2.multiply(outputLayer.getWeights().transpose());
+            Matrix l1Error = l2Delta.multiply(outputLayer.getWeights().transpose());
             Matrix l1Delta = l1Error.hadamardProduct(NeuralNetwork.errorDelta(l1));
+
+            // log error mean
+            if (i%10000 == 0) {
+                double mean = 0;
+                double[][] errorMatrix = l2Error.getMatrix();
+                for (int r = 0; r < l2Error.getRows(); r++) {
+                    mean += errorMatrix[r][0];
+                }
+                mean /= l2Error.getRows();
+                System.out.println("Error: " + mean);
+            }
 
             // update the weights
             outputLayer.setWeights(outputLayer.getWeights().add(l1.transpose().multiply(l2Delta)));
